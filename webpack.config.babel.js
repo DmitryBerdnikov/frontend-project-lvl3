@@ -3,9 +3,10 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
+  entry: path.resolve(__dirname, 'src/scripts/index.js'),
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'build'),
     clean: true,
   },
   module: {
@@ -28,9 +29,12 @@ module.exports = {
       },
     ],
   },
+  devServer: {
+    contentBase: './dist',
+  },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/template.html',
+      template: path.resolve(__dirname, 'src/template.html'),
     }),
   ],
 };

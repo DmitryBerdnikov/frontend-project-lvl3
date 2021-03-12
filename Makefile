@@ -1,10 +1,10 @@
-develop:
+serve:
 	npx webpack serve
 
 install:
 	npm ci
 
-build:
+prod:
 	NODE_ENV=production npx webpack
 
 test:
