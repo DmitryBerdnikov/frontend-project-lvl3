@@ -2,6 +2,7 @@ import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 module.exports = {
+  target: process.env.NODE_ENV === 'development' ? 'web' : 'browserslist', // Почему-то не работает перезагрузка, если есть опция browserslist. Например, в package.json. Пришлось ставить значение 'web'
   mode: process.env.NODE_ENV || 'development',
   entry: path.resolve(__dirname, 'src/scripts/index.js'),
   output: {
@@ -30,7 +31,7 @@ module.exports = {
     ],
   },
   devServer: {
-    contentBase: './dist',
+    contentBase: 'dist',
   },
   plugins: [
     new HtmlWebpackPlugin({

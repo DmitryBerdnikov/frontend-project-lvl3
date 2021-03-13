@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title><%= htmlWebpackPlugin.options.title %></title>
-  </head>
-
-  <body>
-    <div id="root">sdf</div>
-  </body>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSR</title>
+</head>
+<body>
+  <div class="bg-dark text-white py-5">
+    <div class="container">
+      <h1 class="display-3 mb-4">RSS агрегатор</h1>
+      <form class="form-row">
+        <div class="col">
+          <input class="form-control form-control-lg" type="text" placeholder="Ссылка RSS">
+        </div>
+        <div class="col-auto">
+          <button class="btn btn-primary btn-lg px-sm-5" type="submit">Добавить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
 </html>
