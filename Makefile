@@ -5,7 +5,7 @@ install:
 	npm ci
 
 prod:
-	npx webpack
+	NODE_ENV=production npx webpack
 
 test:
 	npm test
