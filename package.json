@@ -5,7 +5,8 @@
   "scripts": {
     "start": "webpack serve",
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "vercel-build": "webpack"
   },
   "lint-staged": {
     "*.js": "eslint"
