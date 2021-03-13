@@ -6,7 +6,7 @@
     "start": "webpack serve",
     "test": "jest",
     "prepare": "husky install",
-    "build": "webpack"
+    "build": "NODE_ENV=production npx webpack"
   },
   "lint-staged": {
     "*.js": "eslint"
