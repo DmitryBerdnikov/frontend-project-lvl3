@@ -10,9 +10,10 @@
   <div class="bg-dark text-white py-5">
     <div class="container">
       <h1 class="display-3 mb-4">RSS агрегатор</h1>
-      <form class="form-row">
+      <form class="form-row js-form-rss">
         <div class="col">
-          <input class="form-control form-control-lg" type="text" placeholder="Ссылка RSS">
+          <input class="form-control form-control-lg js-form-rss-url" name="url" type="text" placeholder="Ссылка RSS" autofocus>
+          <div class="invalid-feedback"></div>
         </div>
         <div class="col-auto">
           <button class="btn btn-primary btn-lg px-sm-5" type="submit">Добавить</button>
