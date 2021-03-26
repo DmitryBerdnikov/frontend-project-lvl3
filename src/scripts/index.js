@@ -1,5 +1,5 @@
-import * as yup from 'yup';
 import axios from 'axios';
+import validateForm from './validateForm';
 
 import '../styles/main.scss';
 
@@ -23,23 +23,6 @@ const request = (url) => {
 
 request('https://ru.hexlet.io/lessons.rss');
 
-yup.setLocale({
-  string: {
-    url: 'Ссылка должна быть валидным URL',
-  },
-});
-
-const schema = yup.object().shape({
-  url: yup
-    .string()
-    .test(
-      'empty-check',
-      'Нужно заполнить поле',
-      (value) => value.length !== 0,
-    )
-    .url(),
-});
-
 document.querySelector('.js-form-rss').addEventListener('submit', (e) => {
   const { target } = e;
   const formData = new FormData(target);
@@ -53,7 +36,7 @@ document.querySelector('.js-form-rss').addEventListener('submit', (e) => {
   const { parentNode } = inputUrl;
 
   try {
-    schema.validateSync({ url });
+    validateForm({ url });
 
     parentNode.querySelector(
       '.invalid-feedback',
