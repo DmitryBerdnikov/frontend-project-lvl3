@@ -31,7 +31,7 @@ module.exports = {
     ],
   },
   devServer: {
-    contentBase: 'dist',
+    contentBase: 'build',
   },
   plugins: [
     new HtmlWebpackPlugin({
