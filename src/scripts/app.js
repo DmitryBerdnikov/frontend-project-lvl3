@@ -10,15 +10,19 @@ const send = (url) => {
   const generatedUrl = new URL(URL_FOR_CROSS_ORIGINS_REQUESTS);
   generatedUrl.searchParams.set('url', url);
 
-  return axios.get(generatedUrl).then((response) => {
-    const { data } = response;
+  return axios.get(generatedUrl)
+    .then((response) => {
+      const { data } = response;
 
-    if (data.status.error && data.status.error.code === 'ENOTFOUND') {
+      if (data.status.error && data.status.error.code === 'ENOTFOUND') {
+        throw new Error('Ошибка сети. Попробуйте снова или повторите попытку позже.');
+      }
+
+      return data;
+    })
+    .catch(() => {
       throw new Error('Ошибка сети. Попробуйте снова или повторите попытку позже.');
-    }
-
-    return data;
-  });
+    });
 };
 
 export default () => {
