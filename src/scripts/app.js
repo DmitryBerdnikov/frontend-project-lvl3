@@ -1,38 +1,19 @@
-import axios from 'axios';
 import _ from 'lodash';
+import i18next from 'i18next';
 import watchState from './watchState';
 import validateURL from './validateURL';
-import parse from './parse';
+import parse from './parseRSS';
+import resources from './locales';
+import send from './api';
+import { DuplicatedRSSError } from './errors';
 
-const send = (url) => {
-  const URL_FOR_CROSS_ORIGINS_REQUESTS = 'https://hexlet-allorigins.herokuapp.com/get';
-
-  const generatedUrl = new URL(URL_FOR_CROSS_ORIGINS_REQUESTS);
-  generatedUrl.searchParams.set('url', url);
-  generatedUrl.searchParams.set('disableCache', true);
-
-  return axios.get(generatedUrl)
-    .then((response) => {
-      const { data } = response;
-
-      if (data.status.error && data.status.error.code === 'ENOTFOUND') {
-        throw new Error('Ошибка сети. Попробуйте снова или повторите попытку позже.');
-      }
-
-      return data;
-    })
-    .catch(() => {
-      throw new Error('Ошибка сети. Попробуйте снова или повторите попытку позже.');
-    });
-};
-
-export default () => {
+const init = (i18n) => {
   const state = {
     form: {
-      errorMessage: '',
+      errorType: '',
       processState: 'filling',
     },
-    addedRssUrls: [],
+    RSSadded: [],
     posts: [],
     feeds: [],
   };
@@ -47,7 +28,7 @@ export default () => {
   elements.feedback = elements.form.querySelector('.feedback');
   elements.submit = elements.form.querySelector('[type="submit"]');
 
-  const watchedState = watchState(state, elements);
+  const watchedState = watchState(state, elements, i18n);
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -58,10 +39,19 @@ export default () => {
 
     const formData = new FormData(e.target);
     const url = formData.get('url');
+    const normalizedURL = url.trim();
 
-    validateURL(url, watchedState.addedRssUrls)
+    try {
+      if (watchedState.RSSadded.includes(normalizedURL)) {
+        throw new DuplicatedRSSError();
+      }
+    } catch (error) {
+      watchedState.form.errorType = error.name;
+      return;
+    }
+
+    validateURL(normalizedURL, watchedState.RSSadded)
       .then(() => {
-        watchedState.form.errorMessage = '';
         watchedState.form.processState = 'sending';
         return send(url);
       })
@@ -75,14 +65,32 @@ export default () => {
 
         watchedState.feeds = [newFeed, ...watchedState.feeds];
         watchedState.posts = [...mappedPosts, ...watchedState.posts];
-        watchedState.addedRssUrls = [url, ...watchedState.addedRssUrls];
+        watchedState.RSSadded = [url, ...watchedState.RSSadded];
 
+        watchedState.form.errorType = '';
         watchedState.form.processState = 'success';
-        watchedState.form.processState = 'filling';
       })
       .catch((error) => {
-        watchedState.form.errorMessage = error.message;
+        const { name } = error;
+        const errorType = name === 'ValidationError' ? error.type : name;
+
+        watchedState.form.errorType = errorType;
+      })
+      .finally(() => {
         watchedState.form.processState = 'filling';
       });
   });
+
+  elements.form.elements.url.focus();
+};
+
+export default () => {
+  const i18nInstance = i18next.createInstance();
+  i18nInstance
+    .init({
+      lng: 'ru',
+      debug: false,
+      resources,
+    })
+    .then(() => init(i18nInstance));
 };

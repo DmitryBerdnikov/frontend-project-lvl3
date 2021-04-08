@@ -47,6 +47,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "i18next": "^20.1.0",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "lodash": "^4.17.21",
