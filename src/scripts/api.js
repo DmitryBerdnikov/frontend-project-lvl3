@@ -13,14 +13,15 @@ export const send = (url) => {
   return axios.get(urlString).then((response) => {
     const { data } = response;
 
-    console.log(data);
-    console.log(JSON.stringify(data));
-
-    if (data.status.error && data.status.error.code === 'ENOTFOUND') {
+    if (
+      data.status &&
+      data.status.error &&
+      data.status.error.code === 'ENOTFOUND'
+    ) {
       throw new NetworkError();
     }
 
-    return data;
+    return data.contents;
   });
 };
 

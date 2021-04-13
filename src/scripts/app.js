@@ -89,7 +89,7 @@ const init = (i18n) => {
 
     send(url)
       .then((data) => {
-        const { title, description, posts } = parse(data.contents);
+        const { title, description, posts } = parse(data);
         const feedId = _.uniqueId();
         const newFeed = { id: feedId, title, description };
         const mappedPosts = posts.map((item) => {
