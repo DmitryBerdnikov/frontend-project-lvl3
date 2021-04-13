@@ -9,10 +9,10 @@ export default {
     errors: {
       undefined: 'Неизвестная ошибка {{error}}',
       network: 'Ошибка сети. Попробуйте снова или повторите попытку позже.',
-      parsingRSS: 'Ресурс не содержит валидный RSS',
+      parsingRSS: 'Ресурс содержит невалидный RSS',
       validation: {
         url: 'Ссылка должна быть валидным URL',
-        empty: 'Нужно заполнить поле',
+        required: 'Нужно заполнить поле',
       },
       duplication: {
         rss: 'RSS уже добавлен',

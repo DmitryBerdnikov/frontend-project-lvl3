@@ -26,10 +26,22 @@ export default (xmlString) => {
   }
 
   doc.querySelectorAll('item').forEach((element) => {
-    const newItem = {
-      title: element.querySelector('title').textContent,
-      link: element.querySelector('link').textContent,
-    };
+    const postTitleEl = element.querySelector('title');
+    const postLinkEl = element.querySelector('link');
+    const postDescriptionEl = element.querySelector('description');
+    const newItem = {};
+
+    if (postTitleEl) {
+      newItem.title = postTitleEl.textContent;
+    }
+
+    if (postLinkEl) {
+      newItem.link = postLinkEl.textContent;
+    }
+
+    if (postDescriptionEl) {
+      newItem.description = postDescriptionEl.textContent;
+    }
 
     result.posts = [...result.posts, newItem];
   });

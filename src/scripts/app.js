@@ -1,87 +1,118 @@
 import _ from 'lodash';
 import i18next from 'i18next';
-import watchState from './watchState';
-import validateURL from './validateURL';
+import * as yup from 'yup';
+import initView from './view';
 import parse from './parseRSS';
 import resources from './locales';
-import send from './api';
-import { DuplicatedRSSError } from './errors';
+import { send, subscribe } from './api';
+
+const subscribeToRSS = (url, watchedState, feedId) => {
+  subscribe(url, (data) => {
+    const { posts } = parse(data.contents);
+    const addedPosts = watchedState.posts.filter(
+      (item) => item.feedId === feedId,
+    );
+    const addedPostsTitles = addedPosts.map(({ title }) => title);
+    const newPosts = posts
+      .filter(({ title }) => !addedPostsTitles.includes(title))
+      .map((item) => ({ feedId, ...item }));
+
+    if (newPosts.length > 0) {
+      watchedState.posts = [...newPosts, ...watchedState.posts]; // eslint-disable-line no-param-reassign
+    }
+  });
+};
+
+const validate = (value, items) => {
+  const schema = yup
+    .string()
+    .trim()
+    .required()
+    .url()
+    .test('unique', (item) => !items.includes(item));
+
+  try {
+    schema.validateSync(value);
+    return null;
+  } catch (error) {
+    return error.type;
+  }
+};
 
 const init = (i18n) => {
   const state = {
     form: {
-      errorType: '',
-      processState: 'filling',
+      status: 'filling',
+      error: null,
+      valid: true,
     },
+    error: null,
     RSSadded: [],
     posts: [],
     feeds: [],
+    uiState: {
+      readedPostsIds: [],
+    },
   };
 
   const elements = {
     form: document.querySelector('.js-form-rss'),
     feeds: document.querySelector('.feeds'),
     posts: document.querySelector('.posts'),
+    feedback: document.querySelector('.feedback'),
+    input: document.querySelector('[name="url"]'),
+    submitBtn: document.querySelector('[type="submit"]'),
   };
 
-  elements.input = elements.form.querySelector('[name="url"]');
-  elements.feedback = elements.form.querySelector('.feedback');
-  elements.submit = elements.form.querySelector('[type="submit"]');
-
-  const watchedState = watchState(state, elements, i18n);
+  const watchedState = initView(state, elements, i18n);
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    if (watchedState.form.processState === 'sending') {
+    if (watchedState.form.status === 'loading') {
       return;
     }
 
     const formData = new FormData(e.target);
     const url = formData.get('url');
-    const normalizedURL = url.trim();
+    const formError = validate(url, watchedState.RSSadded);
 
-    try {
-      if (watchedState.RSSadded.includes(normalizedURL)) {
-        throw new DuplicatedRSSError();
-      }
-    } catch (error) {
-      watchedState.form.errorType = error.name;
+    if (formError) {
+      watchedState.form.error = formError;
+      watchedState.form.valid = false;
       return;
     }
 
-    validateURL(normalizedURL, watchedState.RSSadded)
-      .then(() => {
-        watchedState.form.processState = 'sending';
-        return send(url);
-      })
-      .then((data) => {
-        const parsedData = parse(data.contents);
-        const { title, description, posts } = parsedData;
-        const id = _.uniqueId();
+    watchedState.form.error = null;
+    watchedState.form.valid = true;
+    watchedState.form.status = 'loading';
 
-        const newFeed = { id, title, description };
-        const mappedPosts = posts.map((item) => ({ id, ...item }));
+    send(url)
+      .then((data) => {
+        const { title, description, posts } = parse(data.contents);
+        const feedId = _.uniqueId();
+        const newFeed = { id: feedId, title, description };
+        const mappedPosts = posts.map((item) => {
+          const id = _.uniqueId();
+          return { id, feedId, ...item };
+        });
 
         watchedState.feeds = [newFeed, ...watchedState.feeds];
         watchedState.posts = [...mappedPosts, ...watchedState.posts];
         watchedState.RSSadded = [url, ...watchedState.RSSadded];
 
-        watchedState.form.errorType = '';
-        watchedState.form.processState = 'success';
+        watchedState.form.error = null;
+        watchedState.form.status = 'success';
+
+        subscribeToRSS(url, watchedState, feedId);
       })
       .catch((error) => {
-        const { name } = error;
-        const errorType = name === 'ValidationError' ? error.type : name;
-
-        watchedState.form.errorType = errorType;
+        watchedState.form.error = error.name;
       })
       .finally(() => {
-        watchedState.form.processState = 'filling';
+        watchedState.form.status = 'filling';
       });
   });
-
-  elements.form.elements.url.focus();
 };
 
 export default () => {
