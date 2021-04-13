@@ -25,14 +25,14 @@ const getErrorMessage = (errorType, i18n) => {
   switch (errorType) {
     case 'NetworkError':
       return i18n.t('errors.network');
-    case 'DuplicatedRSSError':
-      return i18n.t('errors.duplication.rss');
+    case 'unique':
+      return i18n.t('errors.unique');
     case 'ParsingRSSError':
       return i18n.t('errors.parsingRSS');
     case 'required':
-      return i18n.t('errors.validation.required');
+      return i18n.t('errors.required');
     case 'url':
-      return i18n.t('errors.validation.url');
+      return i18n.t('errors.url');
     case null:
       return null;
     default:

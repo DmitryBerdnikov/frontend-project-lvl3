@@ -77,6 +77,8 @@ const init = (i18n) => {
     const url = formData.get('url');
     const formError = validate(url, watchedState.RSSadded);
 
+    console.log(url);
+
     if (formError) {
       watchedState.form.error = formError;
       watchedState.form.valid = false;
@@ -107,6 +109,7 @@ const init = (i18n) => {
         subscribeToRSS(url, watchedState, feedId);
       })
       .catch((error) => {
+        console.log(error);
         watchedState.form.error = error.name;
       })
       .finally(() => {
