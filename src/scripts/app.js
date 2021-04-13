@@ -66,7 +66,6 @@ const init = (i18n) => {
 
   const watchedState = initView(state, elements, i18n);
 
-  console.log('CONSOLE LOG WORKS');
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -76,8 +75,6 @@ const init = (i18n) => {
 
     const formData = new FormData(e.target);
     const url = formData.get('url');
-    console.log(url);
-    console.log('URL HERE!!!!');
     const formError = validate(url, watchedState.RSSadded);
 
     if (formError) {
@@ -110,7 +107,6 @@ const init = (i18n) => {
         subscribeToRSS(url, watchedState, feedId);
       })
       .catch((error) => {
-        console.log(error);
         watchedState.form.error = error.name;
       })
       .finally(() => {
