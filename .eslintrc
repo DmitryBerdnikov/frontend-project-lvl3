@@ -4,5 +4,8 @@
   "plugins": ["prettier"],
   "env": {
     "browser": true
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["postcss.config.js", "webpack.config.babel.js"]}]
   }
 }
