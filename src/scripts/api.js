@@ -5,11 +5,12 @@ const proxyURL = 'https://hexlet-allorigins.herokuapp.com/get';
 const updatingRSSTime = 5000;
 
 export const send = (url) => {
-  const generatedUrl = new URL(proxyURL);
-  generatedUrl.searchParams.set('url', url);
-  generatedUrl.searchParams.set('disableCache', true);
+  const instanceURL = new URL(proxyURL);
+  instanceURL.searchParams.set('url', url);
+  instanceURL.searchParams.set('disableCache', true);
+  const urlString = instanceURL.toString();
 
-  return axios.get(generatedUrl).then((response) => {
+  return axios.get(urlString).then((response) => {
     const { data } = response;
 
     if (data.status.error && data.status.error.code === 'ENOTFOUND') {
