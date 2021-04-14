@@ -151,13 +151,16 @@ const renderReadedPost = (elements, id) => {
 const processStatusHandler = (elements, status, i18n) => {
   switch (status) {
     case 'filling': {
-      // elements.submitBtn.removeAttribute('disabled');
+      elements.submitBtn.removeAttribute('disabled');
+      elements.input.removeAttribute('readonly');
       elements.input.focus();
       break;
     }
-    case 'loading':
-      // elements.submitBtn.setAttribute('disabled', true);
+    case 'loading': {
+      elements.input.setAttribute('readonly', true);
+      elements.submitBtn.setAttribute('disabled', true);
       break;
+    }
     case 'success':
       elements.form.reset();
       renderMessage(elements, i18n.t('form.success'));
@@ -169,6 +172,7 @@ const processStatusHandler = (elements, status, i18n) => {
 
 export default (state, elements, i18n) => {
   const watchedState = onChange(state, (path, value) => {
+    console.log(`Path = ${path} | Value = ${value}`);
     switch (path) {
       case 'form.error':
         renderError(elements, value, i18n);
