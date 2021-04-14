@@ -10,20 +10,24 @@ export const send = (url) => {
   instanceURL.searchParams.set('disableCache', true);
   const urlString = instanceURL.toString();
 
-  return axios.get(urlString).then((response) => {
-    const { data } = response;
-    console.log(data);
+  return axios
+    .get(urlString)
+    .then((response) => {
+      const { data } = response;
 
-    if (
-      data.status &&
-      data.status.error &&
-      data.status.error.code === 'ENOTFOUND'
-    ) {
+      if (
+        data.status &&
+        data.status.error &&
+        data.status.error.code === 'ENOTFOUND'
+      ) {
+        throw new NetworkError();
+      }
+
+      return data.contents;
+    })
+    .catch(() => {
       throw new NetworkError();
-    }
-
-    return data.contents;
-  });
+    });
 };
 
 export const subscribe = (url, callback) => {
