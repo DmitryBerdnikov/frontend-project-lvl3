@@ -111,7 +111,6 @@ const init = (i18n) => {
         subscribeToRSS(url, watchedState, feedId);
       })
       .catch((error) => {
-        console.log(error);
         console.log(JSON.stringify(error));
         watchedState.form.error = error.name;
       })

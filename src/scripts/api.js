@@ -12,6 +12,7 @@ export const send = (url) => {
 
   return axios.get(urlString).then((response) => {
     const { data } = response;
+    console.log(data);
 
     if (
       data.status &&
