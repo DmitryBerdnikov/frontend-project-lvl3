@@ -151,12 +151,12 @@ const renderReadedPost = (elements, id) => {
 const processStatusHandler = (elements, status, i18n) => {
   switch (status) {
     case 'filling': {
-      elements.submitBtn.removeAttribute('disabled');
+      // elements.submitBtn.removeAttribute('disabled');
       elements.input.focus();
       break;
     }
     case 'loading':
-      elements.submitBtn.setAttribute('disabled', true);
+      // elements.submitBtn.setAttribute('disabled', true);
       break;
     case 'success':
       elements.form.reset();
