@@ -106,15 +106,14 @@ const init = (i18n) => {
         watchedState.RSSadded = [url, ...watchedState.RSSadded];
 
         watchedState.form.error = null;
+        watchedState.form.status = 'filling';
         watchedState.form.status = 'success';
 
         subscribeToRSS(url, watchedState, feedId);
       })
       .catch((error) => {
-        watchedState.form.error = error.name;
-      })
-      .finally(() => {
         watchedState.form.status = 'filling';
+        watchedState.form.error = error.name;
       });
   });
 };
