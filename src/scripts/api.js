@@ -20,7 +20,7 @@ export const send = (url) => {
     ) {
       throw new NetworkError();
     }
-
+    console.log(data.contents);
     return data.contents;
   });
 };
