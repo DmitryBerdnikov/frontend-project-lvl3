@@ -22,7 +22,7 @@ const subscribeToRSS = (url, watchedState, feedId) => {
         watchedState.posts = [...newPosts, ...watchedState.posts]; // eslint-disable-line no-param-reassign
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   });
 };

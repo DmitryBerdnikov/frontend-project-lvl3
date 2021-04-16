@@ -172,7 +172,6 @@ const processStatusHandler = (elements, status, i18n) => {
 
 export default (state, elements, i18n) => {
   const watchedState = onChange(state, (path, value) => {
-    console.log(`Path = ${path} | Value = ${value}`);
     switch (path) {
       case 'form.error':
         renderError(elements, value, i18n);
