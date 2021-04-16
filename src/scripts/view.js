@@ -150,7 +150,7 @@ const renderReadedPost = (elements, id) => {
   linkEl.classList.add(...linkClassNames.readed);
 };
 
-const processStatusHandler = (elements, status, i18n) => {
+const handleStatus = (elements, status, i18n) => {
   switch (status) {
     case 'filling': {
       elements.submitBtn.removeAttribute('disabled');
@@ -182,7 +182,7 @@ export default (state, elements, i18n) => {
         renderError(elements, value, i18n);
         break;
       case 'form.status':
-        processStatusHandler(elements, value, i18n);
+        handleStatus(elements, value, i18n);
         break;
       case 'feeds':
         renderFeeds(elements, value, i18n);
