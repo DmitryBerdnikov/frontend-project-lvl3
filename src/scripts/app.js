@@ -19,7 +19,8 @@ const subscribeToRSS = (url, watchedState, feedId) => {
         .map((item) => ({ feedId, ...item }));
 
       if (newPosts.length > 0) {
-        watchedState.posts = [...newPosts, ...watchedState.posts]; // eslint-disable-line no-param-reassign
+        // eslint-disable-next-line no-param-reassign
+        watchedState.posts = [...newPosts, ...watchedState.posts];
       }
     } catch (error) {
       // console.log(error);
