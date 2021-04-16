@@ -1,11 +1,27 @@
 {
-  "extends": ["airbnb-base", "prettier",  "plugin:prettier/recommended"],
+  "extends": [
+    "airbnb-base",
+    "plugin:functional/external-recommended",
+    "plugin:functional/recommended",
+    "prettier",
+    "plugin:prettier/recommended"
+  ],
   "parser": "@babel/eslint-parser",
-  "plugins": ["prettier"],
+  "plugins": ["functional", "prettier"],
   "env": {
     "browser": true
   },
   "rules": {
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["postcss.config.js", "webpack.config.babel.js"]}]
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["postcss.config.js", "webpack.config.babel.js"]}],
+    "import/extensions": 0,
+    "import/no-unresolved": 0,
+    "functional/no-conditional-statement": 0,
+    "functional/no-expression-statement": 0,
+    "functional/immutable-data": 0,
+    "functional/functional-parameters": 0,
+    "functional/no-try-statement": 0,
+    "functional/no-throw-statement": 0,
+    "functional/no-class": 0,
+    "functional/no-this-expression": 0
   }
 }

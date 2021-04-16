@@ -8,10 +8,10 @@ export const send = (url) => {
   const instanceURL = new URL(proxyURL);
   instanceURL.searchParams.set('url', url);
   instanceURL.searchParams.set('disableCache', true);
-  const urlString = instanceURL.toString();
+  const apiURL = instanceURL.toString();
 
   return axios
-    .get(urlString)
+    .get(apiURL)
     .then((response) => {
       const { data } = response;
 
