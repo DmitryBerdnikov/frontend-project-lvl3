@@ -8,22 +8,18 @@ import { send, subscribe } from './api';
 
 const subscribeToRSS = (url, watchedState, feedId) => {
   subscribe(url, (data) => {
-    try {
-      const { posts } = parse(data);
-      const addedPosts = watchedState.posts.filter(
-        (item) => item.feedId === feedId,
-      );
-      const addedPostsTitles = addedPosts.map(({ title }) => title);
-      const newPosts = posts
-        .filter(({ title }) => !addedPostsTitles.includes(title))
-        .map((item) => ({ feedId, ...item }));
+    const { posts } = parse(data);
+    const addedPosts = watchedState.posts.filter(
+      (item) => item.feedId === feedId,
+    );
+    const addedPostsTitles = addedPosts.map(({ title }) => title);
+    const newPosts = posts
+      .filter(({ title }) => !addedPostsTitles.includes(title))
+      .map((item) => ({ feedId, ...item }));
 
-      if (newPosts.length > 0) {
-        // eslint-disable-next-line no-param-reassign
-        watchedState.posts = [...newPosts, ...watchedState.posts];
-      }
-    } catch (error) {
-      // console.log(error);
+    if (newPosts.length > 0) {
+      // eslint-disable-next-line no-param-reassign
+      watchedState.posts = [...newPosts, ...watchedState.posts];
     }
   });
 };

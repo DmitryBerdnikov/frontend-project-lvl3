@@ -9,7 +9,9 @@ const linkClassNames = {
 
 const btnPopupHandler = (watchedState, post) => () => {
   const { uiState } = watchedState;
-  const { title, link, description, id } = post;
+  const {
+    title, link, description, id,
+  } = post;
   const modal = document.getElementById('modal');
   const modalBody = modal.querySelector('.modal-body');
   const modalTitle = modal.querySelector('.modal-title');

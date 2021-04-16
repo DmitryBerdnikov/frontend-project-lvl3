@@ -15,13 +15,13 @@ export const send = (url) => {
     .then((response) => {
       const { data } = response;
 
-      if (
-        data.status &&
-        data.status.error &&
-        data.status.error.code === 'ENOTFOUND'
-      ) {
-        throw new NetworkError();
-      }
+      // if (
+      //   data.status
+      //   && data.status.error
+      //   && data.status.error.code === 'ENOTFOUND'
+      // ) {
+      //   throw new NetworkError();
+      // }
 
       return data.contents;
     })
