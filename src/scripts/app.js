@@ -24,6 +24,31 @@ const subscribeToRSS = (url, watchedState, feedId) => {
   });
 };
 
+const processRSS = (watchedState, url, data) => {
+  try {
+    const { title, description, posts } = parse(data);
+    const feedId = _.uniqueId();
+    const newFeed = { id: feedId, title, description };
+    const mappedPosts = posts.map((item) => {
+      const id = _.uniqueId();
+      return { id, feedId, ...item };
+    });
+
+    watchedState.feeds = [newFeed, ...watchedState.feeds];
+    watchedState.posts = [...mappedPosts, ...watchedState.posts];
+    watchedState.RSSadded = [url, ...watchedState.RSSadded];
+
+    watchedState.error = null;
+    watchedState.form.status = 'filling';
+    watchedState.form.status = 'success';
+
+    subscribeToRSS(url, watchedState, feedId);
+  } catch (error) {
+    watchedState.form.status = 'filling';
+    watchedState.error = 'parsing-error';
+  }
+};
+
 const validate = (value, items) => {
   const schema = yup
     .string()
@@ -90,27 +115,11 @@ const init = (i18n) => {
 
     send(url)
       .then((data) => {
-        const { title, description, posts } = parse(data);
-        const feedId = _.uniqueId();
-        const newFeed = { id: feedId, title, description };
-        const mappedPosts = posts.map((item) => {
-          const id = _.uniqueId();
-          return { id, feedId, ...item };
-        });
-
-        watchedState.feeds = [newFeed, ...watchedState.feeds];
-        watchedState.posts = [...mappedPosts, ...watchedState.posts];
-        watchedState.RSSadded = [url, ...watchedState.RSSadded];
-
-        watchedState.form.error = null;
-        watchedState.form.status = 'filling';
-        watchedState.form.status = 'success';
-
-        subscribeToRSS(url, watchedState, feedId);
+        processRSS(watchedState, url, data);
       })
-      .catch((error) => {
+      .catch(() => {
+        watchedState.form.error = 'network-error';
         watchedState.form.status = 'filling';
-        watchedState.form.error = error.name;
       });
   });
 };

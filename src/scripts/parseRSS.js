@@ -1,12 +1,10 @@
-import { ParsingRSSError } from './errors';
-
 export default (xmlString) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlString, 'application/xml');
   const hasRSS = !!doc.querySelector('rss');
 
   if (!hasRSS) {
-    throw new ParsingRSSError();
+    throw new Error('Parsing RSS error');
   }
 
   const result = {

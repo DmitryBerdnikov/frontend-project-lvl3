@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { NetworkError } from './errors';
 
 const proxyURL = 'https://hexlet-allorigins.herokuapp.com/get';
 const updatingRSSTime = 5000;
@@ -8,6 +7,7 @@ export const send = (url) => {
   const instanceURL = new URL(proxyURL);
   instanceURL.searchParams.set('url', url);
   instanceURL.searchParams.set('disableCache', true);
+
   const apiURL = instanceURL.toString();
 
   return axios
@@ -15,18 +15,7 @@ export const send = (url) => {
     .then((response) => {
       const { data } = response;
 
-      // if (
-      //   data.status
-      //   && data.status.error
-      //   && data.status.error.code === 'ENOTFOUND'
-      // ) {
-      //   throw new NetworkError();
-      // }
-
       return data.contents;
-    })
-    .catch(() => {
-      throw new NetworkError();
     });
 };
 

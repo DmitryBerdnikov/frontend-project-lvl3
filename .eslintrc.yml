@@ -14,9 +14,6 @@ extends:
   - 'plugin:functional/external-recommended'
   - 'plugin:functional/recommended'
 
-parserOptions:
-  ecmaVersion: 2020
-
 rules:
   import/extensions: 0
   import/no-unresolved: 0
@@ -27,3 +24,4 @@ rules:
   functional/no-try-statement: 0
   functional/no-throw-statement: 0
   no-param-reassign: 0
+  import/no-extraneous-dependencies: ['error', {'devDependencies': ['postcss.config.js', 'webpack.config.babel.js']}]

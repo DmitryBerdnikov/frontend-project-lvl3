@@ -25,11 +25,11 @@ const btnPopupHandler = (watchedState, post) => () => {
 
 const getErrorMessage = (errorType, i18n) => {
   switch (errorType) {
-    case 'NetworkError':
+    case 'network-error':
       return i18n.t('errors.network');
     case 'unique':
       return i18n.t('errors.unique');
-    case 'ParsingRSSError':
+    case 'parsing-error':
       return i18n.t('errors.parsingRSS');
     case 'required':
       return i18n.t('errors.required');
@@ -175,6 +175,9 @@ const processStatusHandler = (elements, status, i18n) => {
 export default (state, elements, i18n) => {
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
+      case 'error':
+        renderError(elements, value, i18n);
+        break;
       case 'form.error':
         renderError(elements, value, i18n);
         break;
