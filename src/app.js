@@ -8,14 +8,15 @@ import { send, subscribe } from './api';
 
 const subscribeToRSS = (url, watchedState, feedId) => {
   subscribe(url, (data) => {
-    const { posts } = parse(data);
-    const addedPosts = watchedState.posts.filter(
-      (item) => item.feedId === feedId,
+    const { posts: receivedPosts } = parse(data);
+    const { posts: statePosts } = watchedState;
+    const mappedreceivedPosts = receivedPosts.map((item) => ({ feedId, ...item }));
+
+    const newPosts = _.differenceWith(
+      mappedreceivedPosts,
+      statePosts,
+      _.isEqual,
     );
-    const addedPostsTitles = addedPosts.map(({ title }) => title);
-    const newPosts = posts
-      .filter(({ title }) => !addedPostsTitles.includes(title))
-      .map((item) => ({ feedId, ...item }));
 
     if (newPosts.length > 0) {
       // eslint-disable-next-line no-param-reassign
@@ -25,28 +26,20 @@ const subscribeToRSS = (url, watchedState, feedId) => {
 };
 
 const processRSS = (watchedState, url, data) => {
-  try {
-    const { title, description, posts } = parse(data);
-    const feedId = _.uniqueId();
-    const newFeed = { id: feedId, title, description };
-    const mappedPosts = posts.map((item) => {
-      const id = _.uniqueId();
-      return { id, feedId, ...item };
-    });
+  const { title, description, posts } = parse(data);
+  const feedId = _.uniqueId();
+  const newFeed = { id: feedId, title, description };
+  const mappedPosts = posts.map((item) => ({ feedId, ...item }));
 
-    watchedState.feeds = [newFeed, ...watchedState.feeds];
-    watchedState.posts = [...mappedPosts, ...watchedState.posts];
-    watchedState.RSSadded = [url, ...watchedState.RSSadded];
+  watchedState.feeds = [newFeed, ...watchedState.feeds];
+  watchedState.posts = [...mappedPosts, ...watchedState.posts];
+  watchedState.RSSadded = [url, ...watchedState.RSSadded];
 
-    watchedState.error = null;
-    watchedState.form.status = 'filling';
-    watchedState.form.status = 'success';
+  watchedState.error = null;
+  watchedState.form.status = 'filling';
+  watchedState.form.status = 'success';
 
-    subscribeToRSS(url, watchedState, feedId);
-  } catch (error) {
-    watchedState.form.status = 'filling';
-    watchedState.error = 'parsing-error';
-  }
+  subscribeToRSS(url, watchedState, feedId);
 };
 
 const validate = (value, items) => {
@@ -55,7 +48,7 @@ const validate = (value, items) => {
     .trim()
     .required()
     .url()
-    .test('unique', (item) => !items.includes(item));
+    .notOneOf(items);
 
   try {
     schema.validateSync(value);
@@ -66,6 +59,20 @@ const validate = (value, items) => {
 };
 
 const init = (i18n) => {
+  // Не понимаю как переделать логику для вывода ошибок
+  // Сделал локализацию, но ее нигде не использую. Так как функция validate возвращает тип ошибки
+  // Этот тип ошибки я использую в функции getErrorMessage во view.js
+  // Где использую i18n и вывожу разный текст в зависимости от ошибки
+  yup.setLocale({
+    string: {
+      url: i18n.t('errors.url'),
+    },
+    mixed: {
+      required: i18n.t('errors.required'),
+      notOneOf: i18n.t('errors.unique'),
+    },
+  });
+
   const state = {
     form: {
       status: 'filling',
@@ -77,7 +84,7 @@ const init = (i18n) => {
     posts: [],
     feeds: [],
     uiState: {
-      readedPostsIds: [],
+      readedPostsIds: new Set(),
     },
   };
 
@@ -117,9 +124,20 @@ const init = (i18n) => {
       .then((data) => {
         processRSS(watchedState, url, data);
       })
-      .catch(() => {
-        watchedState.form.error = 'network-error';
-        watchedState.form.status = 'filling';
+      .catch((err) => {
+        if (err.isAxiosError) {
+          watchedState.form.error = 'networkError';
+          watchedState.form.status = 'filling';
+          return;
+        }
+
+        if (err.isParsingError) {
+          watchedState.form.error = 'parsingError';
+          watchedState.form.status = 'filling';
+          return;
+        }
+
+        throw new Error(`Undefined error ${err.message}`);
       });
   });
 };

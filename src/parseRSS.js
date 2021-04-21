@@ -1,10 +1,19 @@
+const createError = (name, message) => {
+  const error = new Error(message);
+
+  error.isParsingError = true;
+  error.name = name;
+
+  return error;
+};
+
 export default (xmlString) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlString, 'application/xml');
-  const hasRSS = !!doc.querySelector('rss');
+  const errorEl = !doc.querySelector('parsererror');
 
-  if (!hasRSS) {
-    throw new Error('Parsing RSS error');
+  if (!errorEl) {
+    throw createError('ParsingError', 'Parsing error');
   }
 
   const result = {
@@ -14,32 +23,20 @@ export default (xmlString) => {
   };
 
   const titleEl = doc.querySelector('title');
-  if (titleEl) {
-    result.title = titleEl.textContent;
-  }
-
   const descriptionEl = doc.querySelector('description');
-  if (descriptionEl) {
-    result.description = descriptionEl.textContent;
-  }
+
+  result.title = titleEl.textContent;
+  result.description = descriptionEl.textContent;
 
   doc.querySelectorAll('item').forEach((element) => {
+    const newItem = {};
     const postTitleEl = element.querySelector('title');
     const postLinkEl = element.querySelector('link');
     const postDescriptionEl = element.querySelector('description');
-    const newItem = {};
 
-    if (postTitleEl) {
-      newItem.title = postTitleEl.textContent;
-    }
-
-    if (postLinkEl) {
-      newItem.link = postLinkEl.textContent;
-    }
-
-    if (postDescriptionEl) {
-      newItem.description = postDescriptionEl.textContent;
-    }
+    newItem.title = postTitleEl.textContent;
+    newItem.link = postLinkEl.textContent;
+    newItem.description = postDescriptionEl.textContent;
 
     result.posts = [...result.posts, newItem];
   });

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const proxyURL = 'https://hexlet-allorigins.herokuapp.com/get';
-const updatingRSSTime = 5000;
+const updatingRSSTime = 1000;
 
 export const send = (url) => {
   const instanceURL = new URL(proxyURL);

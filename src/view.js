@@ -20,16 +20,16 @@ const btnPopupHandler = (watchedState, post) => () => {
   modalTitle.textContent = title;
   modalBody.textContent = description;
   modalLinkReadFull.setAttribute('href', link);
-  uiState.readedPostsIds = id;
+  uiState.readedPostsIds.add(id);
 };
 
 const getErrorMessage = (errorType, i18n) => {
   switch (errorType) {
-    case 'network-error':
+    case 'networkError':
       return i18n.t('errors.network');
-    case 'unique':
+    case 'notOneOf':
       return i18n.t('errors.unique');
-    case 'parsing-error':
+    case 'parsingError':
       return i18n.t('errors.parsingRSS');
     case 'required':
       return i18n.t('errors.required');
@@ -138,16 +138,14 @@ const renderError = (elements, value, i18n) => {
   renderMessage(elements, message, 'error');
 };
 
-const renderReadedPost = (elements, id) => {
+const renderReadedPost = (elements, ids) => {
   const { posts: postsBox } = elements;
-  const linkEl = postsBox.querySelector(`.post-link[data-post-id="${id}"]`);
 
-  if (!linkEl) {
-    return;
-  }
-
-  linkEl.classList.remove(...linkClassNames.default);
-  linkEl.classList.add(...linkClassNames.readed);
+  ids.forEach((id) => {
+    const linkEl = postsBox.querySelector(`.post-link[data-post-id="${id}"]`);
+    linkEl.classList.remove(...linkClassNames.default);
+    linkEl.classList.add(...linkClassNames.readed);
+  });
 };
 
 const handleStatus = (elements, status, i18n) => {
