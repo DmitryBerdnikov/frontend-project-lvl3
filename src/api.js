@@ -1,17 +1,19 @@
 import axios from 'axios';
 
-const proxyURL = 'https://hexlet-allorigins.herokuapp.com/get';
 const updatingRSSTime = 5000;
 
-export const send = (url) => {
-  const instanceURL = new URL(proxyURL);
-  instanceURL.searchParams.set('url', url);
-  instanceURL.searchParams.set('disableCache', true);
+const addProxy = (url) => {
+  const urlWithProxy = new URL('/get', 'https://hexlet-allorigins.herokuapp.com');
+  urlWithProxy.searchParams.set('url', url);
+  urlWithProxy.searchParams.set('disableCache', true);
+  return urlWithProxy.toString();
+};
 
-  const apiURL = instanceURL.toString();
+export const send = (url) => {
+  const urlWithProxy = addProxy(url);
 
   return axios
-    .get(apiURL)
+    .get(urlWithProxy)
     .then((response) => {
       const { data } = response;
 

@@ -10,7 +10,10 @@ const subscribeToRSS = (url, watchedState, feedId) => {
   subscribe(url, (data) => {
     const { posts: receivedPosts } = parse(data);
     const { posts: statePosts } = watchedState;
-    const mappedreceivedPosts = receivedPosts.map((item) => ({ feedId, ...item }));
+    const mappedreceivedPosts = receivedPosts.map((item) => ({
+      feedId,
+      ...item,
+    }));
 
     const newPosts = _.differenceWith(
       mappedreceivedPosts,
@@ -28,12 +31,16 @@ const subscribeToRSS = (url, watchedState, feedId) => {
 const processRSS = (watchedState, url, data) => {
   const { title, description, posts } = parse(data);
   const feedId = _.uniqueId();
-  const newFeed = { id: feedId, title, description };
+  const newFeed = {
+    url,
+    id: feedId,
+    title,
+    description,
+  };
   const mappedPosts = posts.map((item) => ({ feedId, ...item }));
 
   watchedState.feeds = [newFeed, ...watchedState.feeds];
   watchedState.posts = [...mappedPosts, ...watchedState.posts];
-  watchedState.RSSadded = [url, ...watchedState.RSSadded];
 
   watchedState.error = null;
   watchedState.form.status = 'success';
@@ -41,16 +48,17 @@ const processRSS = (watchedState, url, data) => {
   subscribeToRSS(url, watchedState, feedId);
 };
 
-const validate = (value, items) => {
+const validateUrl = (url, feeds) => {
+  const feedUrls = feeds.map((feed) => feed.url);
   const schema = yup
     .string()
     .trim()
     .required()
     .url()
-    .notOneOf(items);
+    .notOneOf(feedUrls);
 
   try {
-    schema.validateSync(value);
+    schema.validateSync(url);
     return null;
   } catch (error) {
     return error.type;
@@ -58,10 +66,6 @@ const validate = (value, items) => {
 };
 
 const init = (i18n) => {
-  // Не понимаю как переделать логику для вывода ошибок
-  // Сделал локализацию, но ее нигде не использую. Так как функция validate возвращает тип ошибки
-  // Этот тип ошибки я использую в функции getErrorMessage во view.js
-  // Где использую i18n и вывожу разный текст в зависимости от ошибки
   yup.setLocale({
     string: {
       url: i18n.t('errors.url'),
@@ -79,7 +83,6 @@ const init = (i18n) => {
       valid: true,
     },
     error: null,
-    RSSadded: [],
     posts: [],
     feeds: [],
     uiState: {
@@ -107,7 +110,7 @@ const init = (i18n) => {
 
     const formData = new FormData(e.target);
     const url = formData.get('url');
-    const formError = validate(url, watchedState.RSSadded);
+    const formError = validateUrl(url, watchedState.feeds);
 
     if (formError) {
       watchedState.form.error = formError;
