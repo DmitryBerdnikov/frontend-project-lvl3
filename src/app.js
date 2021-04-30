@@ -36,7 +36,6 @@ const processRSS = (watchedState, url, data) => {
   watchedState.RSSadded = [url, ...watchedState.RSSadded];
 
   watchedState.error = null;
-  watchedState.form.status = 'filling';
   watchedState.form.status = 'success';
 
   subscribeToRSS(url, watchedState, feedId);

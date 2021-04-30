@@ -10,9 +10,9 @@ const createError = (name, message) => {
 export default (xmlString) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlString, 'application/xml');
-  const errorEl = !doc.querySelector('parsererror');
+  const errorEl = doc.querySelector('parsererror');
 
-  if (!errorEl) {
+  if (errorEl) {
     throw createError('ParsingError', 'Parsing error');
   }
 

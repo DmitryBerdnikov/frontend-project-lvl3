@@ -163,6 +163,9 @@ const handleStatus = (elements, status, i18n) => {
     }
     case 'success':
       elements.form.reset();
+      elements.submitBtn.removeAttribute('disabled');
+      elements.input.removeAttribute('readonly');
+      elements.input.focus();
       renderMessage(elements, i18n.t('form.success'));
       break;
     default:
