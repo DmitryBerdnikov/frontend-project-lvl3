@@ -1,4 +1,6 @@
-import _ from 'lodash';
+import uniqueId from 'lodash/uniqueId';
+import differenceWith from 'lodash/differenceWith';
+import isEqual from 'lodash/isEqual';
 import i18next from 'i18next';
 import * as yup from 'yup';
 import initView from './view';
@@ -15,10 +17,10 @@ const subscribeToRSS = (url, watchedState, feedId) => {
       ...item,
     }));
 
-    const newPosts = _.differenceWith(
+    const newPosts = differenceWith(
       mappedreceivedPosts,
       statePosts,
-      _.isEqual,
+      isEqual,
     );
 
     if (newPosts.length > 0) {
@@ -30,7 +32,7 @@ const subscribeToRSS = (url, watchedState, feedId) => {
 
 const processRSS = (watchedState, url, data) => {
   const { title, description, posts } = parse(data);
-  const feedId = _.uniqueId();
+  const feedId = uniqueId();
   const newFeed = {
     url,
     id: feedId,
