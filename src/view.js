@@ -3,8 +3,8 @@ import 'bootstrap/js/dist/modal';
 import onChange from 'on-change';
 
 const linkClassNames = {
-  default: ['font-weight-bold'],
-  readed: ['font-weight-normal'],
+  default: ['fw-bold'],
+  readed: ['fw-normal'],
 };
 
 const btnPopupHandler = (watchedState, post) => () => {
@@ -95,8 +95,8 @@ const renderPosts = (watchedState, elements, i18n) => {
 
     const btnPopup = document.createElement('button');
     btnPopup.classList.add('btn', 'btn-primary', 'btn-sm');
-    btnPopup.setAttribute('data-toggle', 'modal');
-    btnPopup.setAttribute('data-target', '#modal');
+    btnPopup.setAttribute('data-bs-toggle', 'modal');
+    btnPopup.setAttribute('data-bs-target', '#modal');
     btnPopup.textContent = i18n.t('view');
     btnPopup.addEventListener('click', btnPopupHandler(watchedState, post));
 

@@ -1,3 +1,4 @@
+import 'bootstrap';
 import uniqueId from 'lodash/uniqueId';
 import differenceWith from 'lodash/differenceWith';
 import isEqual from 'lodash/isEqual';

@@ -11,7 +11,7 @@
     <div class="container">
       <h1 class="display-3 mb-4">RSS агрегатор</h1>
       <p class="text-muted mb-2">Пример: https://ru.hexlet.io/lessons.rss, http://lorem-rss.herokuapp.com/feed</p>
-      <form class="form-row js-form-rss">
+      <form class="row js-form-rss">
         <div class="col">
           <input class="form-control form-control-lg js-form-rss-url" name="url" aria-label="url" type="text" placeholder="Ссылка RSS" autofocus>
         </div>
@@ -37,19 +37,19 @@
     </section>
   </main>
 
-  <div id="modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+  <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title"></h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body"></div>
+
         <div class="modal-footer">
           <a href="#" class="btn btn-primary link-read-full" target="_blank">Читать полностью</a>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
         </div>
       </div>
     </div>
