@@ -48,8 +48,7 @@ const processRSS = (watchedState, url, data) => {
 
 const validateUrl = (url, feeds) => {
   const feedUrls = feeds.map((feed) => feed.url);
-  const schema = yup.string().trim().required().url()
-    .notOneOf(feedUrls);
+  const schema = yup.string().trim().required().url().notOneOf(feedUrls);
 
   try {
     schema.validateSync(url);

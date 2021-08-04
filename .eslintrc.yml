@@ -3,7 +3,7 @@
 root: true
 
 plugins:
-  - functional
+  - prettier
 
 env:
   browser: true
@@ -11,17 +11,11 @@ env:
 
 extends:
   - 'airbnb-base'
-  - 'plugin:functional/external-recommended'
-  - 'plugin:functional/recommended'
+  - 'prettier'
+  - 'plugin:prettier/recommended'
 
 rules:
   import/extensions: 0
   import/no-unresolved: 0
-  functional/no-conditional-statement: 0
-  functional/no-expression-statement: 0
-  functional/immutable-data: 0
-  functional/functional-parameters: 0
-  functional/no-try-statement: 0
-  functional/no-throw-statement: 0
   no-param-reassign: 0
   import/no-extraneous-dependencies: ['error', {'devDependencies': ['postcss.config.js', 'webpack.config.babel.js']}]
