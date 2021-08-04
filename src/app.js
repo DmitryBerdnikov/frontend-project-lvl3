@@ -18,14 +18,9 @@ const subscribeToRSS = (url, watchedState, feedId) => {
       ...item,
     }));
 
-    const newPosts = differenceWith(
-      mappedreceivedPosts,
-      statePosts,
-      isEqual,
-    );
+    const newPosts = differenceWith(mappedreceivedPosts, statePosts, isEqual);
 
     if (newPosts.length > 0) {
-      // eslint-disable-next-line no-param-reassign
       watchedState.posts = [...newPosts, ...watchedState.posts];
     }
   });
@@ -53,11 +48,7 @@ const processRSS = (watchedState, url, data) => {
 
 const validateUrl = (url, feeds) => {
   const feedUrls = feeds.map((feed) => feed.url);
-  const schema = yup
-    .string()
-    .trim()
-    .required()
-    .url()
+  const schema = yup.string().trim().required().url()
     .notOneOf(feedUrls);
 
   try {
@@ -66,6 +57,30 @@ const validateUrl = (url, feeds) => {
   } catch (error) {
     return error.type;
   }
+};
+
+const getProcessingErrorType = (e) => {
+  if (encodeURIComponent.isAxiosError) {
+    return 'networkError';
+  }
+
+  if (e.isParsingError) {
+    return 'parsingError';
+  }
+
+  return 'unknown';
+};
+
+const loadRss = (watchedState, url) => {
+  send(url)
+    .then((data) => {
+      processRSS(watchedState, url, data);
+    })
+    .catch((e) => {
+      console.log(e);
+      watchedState.form.error = getProcessingErrorType(e);
+      watchedState.form.status = 'filling';
+    });
 };
 
 const init = (i18n) => {
@@ -125,25 +140,7 @@ const init = (i18n) => {
     watchedState.form.valid = true;
     watchedState.form.status = 'loading';
 
-    send(url)
-      .then((data) => {
-        processRSS(watchedState, url, data);
-      })
-      .catch((err) => {
-        if (err.isAxiosError) {
-          watchedState.form.error = 'networkError';
-          watchedState.form.status = 'filling';
-          return;
-        }
-
-        if (err.isParsingError) {
-          watchedState.form.error = 'parsingError';
-          watchedState.form.status = 'filling';
-          return;
-        }
-
-        throw new Error(`Undefined error ${err.message}`);
-      });
+    loadRss(watchedState, url);
   });
 };
 
