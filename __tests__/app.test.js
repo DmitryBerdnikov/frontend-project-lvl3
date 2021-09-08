@@ -20,8 +20,12 @@ beforeEach(async () => {
 });
 
 test('Validation: URL', async () => {
+  userEvent.click(elements.submit);
+  const regexpTextRequired = new RegExp(texts.errors.required, 'i');
+  expect(screen.getByText(regexpTextRequired)).toBeInTheDocument();
+
   userEvent.type(elements.input, 'not valid url');
   userEvent.click(elements.submit);
-  const regexp = new RegExp(texts.errors.url, 'i');
-  expect(screen.getByText(regexp)).toBeInTheDocument();
+  const regexpTextNotValidUrl = new RegExp(texts.errors.url, 'i');
+  expect(screen.getByText(regexpTextNotValidUrl)).toBeInTheDocument();
 });
