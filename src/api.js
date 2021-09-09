@@ -8,7 +8,7 @@ const updatingRSSTime = 4000;
 const addProxy = (url) => {
   const urlWithProxy = new URL(ENDPOINT, BASE_URL);
   urlWithProxy.searchParams.set('url', url);
-  urlWithProxy.searchParams.set('disableCache', true);
+  // urlWithProxy.searchParams.set('disableCache', true);
   return urlWithProxy.toString();
 };
 
