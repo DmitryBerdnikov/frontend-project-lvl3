@@ -7,7 +7,7 @@ import axios from 'axios';
 import axiosHTTPAdapter from 'axios/lib/adapters/http';
 import initApp from '../src/app';
 import locales from '../src/locales/ru';
-import { BASE_URL, ENDPOINT } from '../src/api';
+import { BASE_URL, ENDPOINT, QUERY_PARAMS } from '../src/api';
 
 // If you are using jsdom, axios will default to using the XHR adapter which
 // can't be intercepted by nock. So, configure axios to use the node adapter.
@@ -26,7 +26,7 @@ const elements = {};
 const applyNock = (url, response) => {
   nock(BASE_URL)
     .get(ENDPOINT)
-    .query({ url })
+    .query({ ...QUERY_PARAMS, url })
     .reply(200, { contents: response });
 };
 

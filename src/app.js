@@ -76,7 +76,7 @@ const loadRss = (watchedState, url) => {
       processRSS(watchedState, url, data);
     })
     .catch((e) => {
-      console.log(e);
+      console.warn(e); // eslint-disable-line no-console
       watchedState.form.error = getProcessingErrorType(e);
       watchedState.form.status = 'filling';
     });
