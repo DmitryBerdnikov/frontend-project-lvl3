@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import { screen } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import fs from 'fs';
@@ -19,7 +19,14 @@ axios.defaults.adapter = axiosHTTPAdapter;
 
 nock.disableNetConnect();
 
-const notRssURL = 'https://yandex.ru';
+const getFixturePath = (filename) => join(__dirname, '__fixtures__', filename);
+const readFixtureFile = (filename) =>
+  fs.readFileSync(getFixturePath(filename), 'utf-8');
+const rss1 = readFixtureFile('rss1.xml');
+const rss2 = readFixtureFile('rss2.xml');
+const notRssUrl = 'https://yandex.ru';
+const rssUrl1 = 'http://lorem-rss.herokuapp.com/feed';
+const rssUrl2 = 'https://ru.hexlet.io/lessons.rss';
 const { translation: texts } = locales;
 const elements = {};
 
@@ -41,7 +48,7 @@ beforeEach(async () => {
   await initApp();
 });
 
-test('Validation: URL', async () => {
+test('Validation for not empty and valid URL', async () => {
   userEvent.click(elements.submit);
   const regexpTextRequired = new RegExp(texts.errors.required, 'i');
   expect(screen.getByText(regexpTextRequired)).toBeInTheDocument();
@@ -52,11 +59,66 @@ test('Validation: URL', async () => {
   expect(screen.getByText(regexpTextNotValidUrl)).toBeInTheDocument();
 });
 
-test('Validation: invalid RSS', async () => {
-  applyNock(notRssURL, '<html></html>');
+test('Invalid RSS', async () => {
+  applyNock(notRssUrl, '<html></html>');
 
-  userEvent.type(elements.input, notRssURL);
+  userEvent.type(elements.input, notRssUrl);
   userEvent.click(elements.submit);
   const regexpTextInvalidRSS = new RegExp(texts.errors.parsingRSS, 'i');
   expect(await screen.findByText(regexpTextInvalidRSS)).toBeInTheDocument();
 });
+
+test("Same RSS can't be loaded more than once", async () => {
+  applyNock(rssUrl1, rss1);
+
+  userEvent.type(elements.input, rssUrl1);
+  userEvent.click(elements.submit);
+  const regexpTextSuccess = new RegExp(texts.form.success, 'i');
+  expect(await screen.findByText(regexpTextSuccess)).toBeInTheDocument();
+
+  userEvent.type(elements.input, rssUrl1);
+  userEvent.click(elements.submit);
+  const regexpTextUniqueRSS = new RegExp(texts.errors.unique, 'i');
+  expect(await screen.findByText(regexpTextUniqueRSS)).toBeInTheDocument();
+});
+
+test('Load multiple RSS', async () => {
+  applyNock(rssUrl1, rss1);
+  applyNock(rssUrl2, rss2);
+
+  userEvent.type(elements.input, rssUrl1);
+  userEvent.click(elements.submit);
+
+  const rss1Title = screen.getByRole('heading', {
+    name: 'W3Schools Home Page',
+  });
+
+  const rss1Feed1Link = screen.getByRole('link', {
+    name: 'RSS Tutorial',
+  });
+
+  expect(rss1Title).toBeInTheDocument();
+  expect(rss1Feed1Link).toBeInTheDocument();
+  expect(rss1Feed1Link).toHaveAttribute(
+    'href',
+    'https://www.w3schools.com/xml/xml_rss.asp',
+  );
+
+  userEvent.type(elements.input, rssUrl2);
+  userEvent.click(elements.submit);
+
+  const rss2Title = screen.getByRole('heading', {
+    name: 'RSS Title',
+  });
+
+  const rss2Feed1Link = screen.getByRole('link', {
+    name: 'Another Title',
+  });
+
+  expect(rss2Title).toBeInTheDocument();
+  expect(rss2Feed1Link).toBeInTheDocument();
+  expect(rss1Title).toBeInTheDocument();
+  expect(rss1Feed1Link).toBeInTheDocument();
+});
+
+test.todo('Form becomes disabled while loading RSS');

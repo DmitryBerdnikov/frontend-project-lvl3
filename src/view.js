@@ -9,9 +9,7 @@ const linkClassNames = {
 
 const btnPopupHandler = (watchedState, post) => () => {
   const { uiState } = watchedState;
-  const {
-    title, link, description, id,
-  } = post;
+  const { title, link, description, id } = post;
   const modal = document.getElementById('modal');
   const modalBody = modal.querySelector('.modal-body');
   const modalTitle = modal.querySelector('.modal-title');
@@ -142,6 +140,7 @@ const renderReadedPost = (elements, ids) => {
   const { posts: postsBox } = elements;
 
   ids.forEach((id) => {
+    // TODO: fix data-post-it, it's undefined right now
     const linkEl = postsBox.querySelector(`.post-link[data-post-id="${id}"]`);
     linkEl.classList.remove(...linkClassNames.default);
     linkEl.classList.add(...linkClassNames.readed);

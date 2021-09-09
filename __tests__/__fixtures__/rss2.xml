@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+
+<channel>
+  <title>RSS Title</title>
+  <link>https://yandex.ru</link>
+  <description>Some text</description>
+  <item>
+    <title>Another Title</title>
+    <link>https://yandex.ru/xml/xml_rss.asp</link>
+    <description>Another text</description>
+  </item>
+  <item>
+    <title>Other Title</title>
+    <link>https://yandex.ru/xml</link>
+    <description>Other text</description>
+  </item>
+</channel>
+
+</rss>

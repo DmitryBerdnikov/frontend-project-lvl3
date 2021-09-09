@@ -36,13 +36,11 @@ const processRSS = (watchedState, url, data) => {
     description,
   };
   const mappedPosts = posts.map((item) => ({ feedId, ...item }));
-
   watchedState.feeds = [newFeed, ...watchedState.feeds];
   watchedState.posts = [...mappedPosts, ...watchedState.posts];
 
   watchedState.error = null;
   watchedState.form.status = 'success';
-
   subscribeToRSS(url, watchedState, feedId);
 };
 
