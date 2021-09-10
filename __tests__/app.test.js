@@ -89,15 +89,11 @@ test('Load multiple RSS', async () => {
   userEvent.type(elements.input, rssUrl1);
   userEvent.click(elements.submit);
 
-  const rss1Title = screen.getByRole('heading', {
-    name: 'W3Schools Home Page',
-  });
+  expect(await screen.findByText(/W3Schools Home Page/i)).toBeInTheDocument();
 
   const rss1Feed1Link = screen.getByRole('link', {
     name: 'RSS Tutorial',
   });
-
-  expect(rss1Title).toBeInTheDocument();
   expect(rss1Feed1Link).toBeInTheDocument();
   expect(rss1Feed1Link).toHaveAttribute(
     'href',
@@ -107,18 +103,19 @@ test('Load multiple RSS', async () => {
   userEvent.type(elements.input, rssUrl2);
   userEvent.click(elements.submit);
 
-  const rss2Title = screen.getByRole('heading', {
-    name: 'RSS Title',
-  });
+  expect(await screen.findByText(/RSS Title/i)).toBeInTheDocument();
 
   const rss2Feed1Link = screen.getByRole('link', {
-    name: 'Another Title',
+    name: 'RSS Tutorial',
   });
-
-  expect(rss2Title).toBeInTheDocument();
   expect(rss2Feed1Link).toBeInTheDocument();
-  expect(rss1Title).toBeInTheDocument();
-  expect(rss1Feed1Link).toBeInTheDocument();
+  expect(rss2Feed1Link).toHaveAttribute(
+    'href',
+    'https://www.w3schools.com/xml/xml_rss.asp',
+  );
+
+  expect(await screen.findByText(/W3Schools Home Page/i)).toBeInTheDocument();
+  expect(await screen.findByText(/RSS Tutorial/i)).toBeInTheDocument();
 });
 
 test.todo('Form becomes disabled while loading RSS');
