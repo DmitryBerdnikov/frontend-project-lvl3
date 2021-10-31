@@ -67,7 +67,11 @@ const renderFeeds = (elements, feeds, i18n) => {
 };
 
 const renderPosts = (watchedState, elements, i18n) => {
-  const { posts } = watchedState;
+  const {
+    posts,
+    uiState: { readedPostsIds },
+  } = watchedState;
+
   const { posts: postsBox } = elements;
   const titleEl = document.createElement('h2');
   titleEl.textContent = i18n.t('posts');
@@ -86,7 +90,10 @@ const renderPosts = (watchedState, elements, i18n) => {
     );
 
     const linkEl = document.createElement('a');
-    linkEl.classList.add('post-link', ...linkClassNames.default);
+    const linkResolvedClassNames = readedPostsIds.has(id)
+      ? linkClassNames.readed
+      : linkClassNames.default;
+    linkEl.classList.add('post-link', ...linkResolvedClassNames);
     linkEl.textContent = title;
     linkEl.dataset.postId = id;
     linkEl.href = link;
@@ -136,11 +143,10 @@ const renderError = (elements, value, i18n) => {
   renderMessage(elements, message, 'error');
 };
 
-const renderReadedPost = (elements, ids) => {
+const renderReadedPosts = (elements, ids) => {
   const { posts: postsBox } = elements;
 
   ids.forEach((id) => {
-    // TODO: fix data-post-it, it's undefined right now
     const linkEl = postsBox.querySelector(`.post-link[data-post-id="${id}"]`);
     linkEl.classList.remove(...linkClassNames.default);
     linkEl.classList.add(...linkClassNames.readed);
@@ -191,7 +197,7 @@ export default (state, elements, i18n) => {
         renderPosts(watchedState, elements, i18n);
         break;
       case 'uiState.readedPostsIds':
-        renderReadedPost(elements, value);
+        renderReadedPosts(elements, value);
         break;
       default:
         break;
