@@ -118,4 +118,13 @@ test('Load multiple RSS', async () => {
   expect(await screen.findByText(/RSS Tutorial/i)).toBeInTheDocument();
 });
 
-test.todo('Form becomes disabled while loading RSS');
+test('Form becomes disabled while loading RSS', async () => {
+  applyNock(rssUrl1, rss1);
+
+  userEvent.type(elements.input, rssUrl1);
+  userEvent.click(elements.submit);
+  expect(elements.submit).toHaveAttribute('disabled', 'true');
+  const regexpTextSuccess = new RegExp(texts.form.success, 'i');
+  expect(await screen.findByText(regexpTextSuccess)).toBeInTheDocument();
+  expect(elements.submit).not.toHaveAttribute('disabled');
+});
