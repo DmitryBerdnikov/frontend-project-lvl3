@@ -129,6 +129,39 @@ test('Form becomes disabled while loading RSS', async () => {
   expect(elements.submit).not.toHaveAttribute('disabled');
 });
 
+test('RSS preview is opened in modal', async () => {
+  applyNock(rssUrl1, rss1);
+
+  userEvent.type(elements.input, rssUrl1);
+  userEvent.click(elements.submit);
+
+  const regexpTextSuccess = new RegExp(texts.form.success, 'i');
+  expect(await screen.findByText(regexpTextSuccess)).toBeInTheDocument();
+
+  const firstRSSLink = await screen.getByRole('link', {
+    name: 'RSS Tutorial',
+  });
+  expect(firstRSSLink).not.toHaveClass('fw-normal');
+  expect(firstRSSLink).toHaveClass('fw-bold');
+
+  const btnsPreview = await screen.findAllByText(texts.view);
+  const firstRSSPreviewBtn = btnsPreview[0];
+  userEvent.click(firstRSSPreviewBtn);
+
+  const modalDescription = await screen.findByText(
+    'New RSS tutorial on W3Schools',
+  );
+  expect(modalDescription).toBeVisible();
+
+  const btnCloseModal = await screen.findByText('Закрыть');
+  userEvent.click(btnCloseModal);
+
+  // TODO: don't know how to wait for chaning visibility
+  // expect(modalDescription).not.toBeVisible();
+  expect(firstRSSLink).toHaveClass('fw-normal');
+  expect(firstRSSLink).not.toHaveClass('fw-bold');
+});
+
 test('Network error', async () => {
   nock(BASE_URL)
     .get(ENDPOINT)
