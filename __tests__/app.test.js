@@ -128,3 +128,15 @@ test('Form becomes disabled while loading RSS', async () => {
   expect(await screen.findByText(regexpTextSuccess)).toBeInTheDocument();
   expect(elements.submit).not.toHaveAttribute('disabled');
 });
+
+test('Network error', async () => {
+  nock(BASE_URL)
+    .get(ENDPOINT)
+    .query({ ...QUERY_PARAMS, url: rssUrl1 })
+    .reply(500);
+
+  userEvent.type(elements.input, rssUrl1);
+  userEvent.click(elements.submit);
+  const regexpTextNetworkError = new RegExp(texts.errors.network, 'i');
+  expect(await screen.findByText(regexpTextNetworkError)).toBeInTheDocument();
+});
