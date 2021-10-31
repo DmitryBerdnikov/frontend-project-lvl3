@@ -161,6 +161,10 @@ const handleStatus = (elements, status, i18n) => {
       elements.input.focus();
       break;
     }
+    case 'error': {
+      elements.input.focus();
+      break;
+    }
     case 'loading': {
       elements.input.setAttribute('readonly', true);
       elements.submitBtn.setAttribute('disabled', true);

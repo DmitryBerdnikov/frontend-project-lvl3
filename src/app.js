@@ -137,6 +137,8 @@ const init = (i18n) => {
     if (formError) {
       watchedState.form.error = formError;
       watchedState.form.valid = false;
+      watchedState.form.status = 'error';
+      watchedState.form.status = 'filling';
       return;
     }
 
